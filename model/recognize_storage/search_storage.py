@@ -1,0 +1,1 @@
+SEARCH_STORAGE = ['pesquise','pesquisa','pesquisar','procure', 'procurar']

@@ -1,0 +1,1 @@
+OPEN_STORAGE = ['abrir', 'abra', 'abre', 'execute', 'executar', 'executa']
