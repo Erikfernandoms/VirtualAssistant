@@ -33,8 +33,11 @@ def response_conversation(voice_data, conversation, person):
         greetings = ['Sempre bem, obrigada por perguntar', 'Estou maravilhosa', 'A pergunta é: quando que não estou? kkk']
         greet = greetings[random.randint(0, len(greetings)-1)]
         engine_speak(greet)
-    else:
+    elif conversation == 3:
         greetings = [f'Que bom {person}, fico feliz! Em que posso ajudar?', 'Ótimo, posso ajudar em algo?']
         greet = greetings[random.randint(0, len(greetings)-1)]
         engine_speak(greet)
-                
+    else:
+        greetings = [f'É sempre um prazer {person}', f'Conte comigo pra tudo {person}']
+        greet = greetings[random.randint(0, len(greetings)-1)]
+        engine_speak(greet)

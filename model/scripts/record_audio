@@ -1,0 +1,18 @@
+import speech_recognition as sr
+from model.scripts.engine_speak import engine_speak
+recognize_voice = sr.Recognizer() #Reconhecimento da fala
+
+def record_audio(self, ask="", person):
+        with sr.Microphone() as source:
+            if ask:
+                engine_speak(ask)
+            audio = recognize_voice.listen(source, 3, 4)
+            try:
+                voice_data = recognize_voice.recognize_google(audio,language='pt-BR')
+            except sr.UnknownValueError: #Exceção para caso não fale nada ou não entenda o que foi dito
+                engine_speak(f"Desculpe {person}, eu não entendi o que você disse, pode repetir?")
+            except sr.RequestError:
+                engine_speak("Desculpe, meu servidor está off")    
+            print(">>", voice_data.lower())
+            voice_data = voice_data.lower()
+            return voice_data.lower()   
