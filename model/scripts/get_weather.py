@@ -4,13 +4,13 @@ from datetime import date
 import urllib.parse
 from model.scripts.engine_speak import engine_speak
 
-accuweatherAPIKey = "itu0pE7AKJG4OPjYtzmMFPK01FcRB74Q"
+accuweatherAPIKey = "cvm7SWOH3JaCUEc7EaGNbrPekez7H5yL"
 mapBoxToken = 'pk.eyJ1IjoibHVpenRpbWJvIiwiYSI6ImNrcG4wbmY4MTI2NDIyeG13amloYjM0cHMifQ.dvbhlq4Tns9HzRp27qJ21A'
 dias_semana = ['Domingo', 'Segunda-feira', 'Terça-feira',
                'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
 
 
-def pegarCoordenadas():
+def get_coords():
     data = requests.get('http://www.geoplugin.net/json.gp')
 
     if data.status_code != 200:
@@ -30,7 +30,7 @@ def pegarCoordenadas():
             return None
 
 
-def pegarCodigoLocal(lat, long):
+def get_local_code(lat, long):
     LocationAPIURL = "http://dataservice.accuweather.com/locations/v1/cities/" \
         + "geoposition/search?apikey=" + accuweatherAPIKey \
         + "&q=" + lat + "%2C" + long + "&language=pt-br"
@@ -79,7 +79,7 @@ def pegarTempoAgora(codigoLocal, nomeLocal):
             return None
 
 
-def pegarPrevisao5Dias(codigoLocal):
+def get5days_weather(codigoLocal):
     dailyAPIUrl = "http://dataservice.accuweather.com/forecasts/v1/daily/5day/" \
         + codigoLocal + "?apikey=" + accuweatherAPIKey \
         + "&language=pt-br&metric=true"
@@ -112,7 +112,7 @@ def pegarPrevisao5Dias(codigoLocal):
 
 def mostrarPrevisao(lat, long):
     try:
-        local = pegarCodigoLocal(lat, long)
+        local = get_local_code(lat, long)
         climaAtual = pegarTempoAgora(local['codigoLocal'], local['nomeLocal'])
         engine_speak("Previsão em: "  + climaAtual['nomeLocal'])
         engine_speak("Clima atual: " + climaAtual['textoClima'])
@@ -122,7 +122,7 @@ def mostrarPrevisao(lat, long):
         engine_speak('Erro ao obter o clima atual!')
 
 
-def pesquisarLocal(local):
+def search_local(local):
     _local = urllib.parse.quote(local)
     mapBoxGeocodeUrl = 'https://api.mapbox.com/geocoding/v5/mapbox.places/' \
         + _local + '.json?access_token=' + mapBoxToken
@@ -147,20 +147,7 @@ def pesquisarLocal(local):
             engine_speak('Erro ao obter os dados da localização!')
 
 def get_weather(local):
-    coordenadas = pesquisarLocal(local)
+    coordenadas = search_local(local)
     mostrarPrevisao(coordenadas['lat'], coordenadas['long'])
-    engine_speak("Deseja ver a previsão para os próximos dias? ")
-    #answer = record_audio()
-    #get5days_weather(answer)
-def get5days_weather(answer):
-    if answer == 'sim':
-        try:
-            previsao5Dias = pegarPrevisao5Dias(local['codigoLocal'])
-            for dia in previsao5Dias:
-                engine_speak("Previsão para:" + dia['dia'] + ': ' + dia['clima'])
-                engine_speak('Mínima: ' + str(int(dia['min'])) + "\xb0" + "C, Máxima:" + str(int(dia['max'])) + "\xb0" + "C")
-                
-        except:
-            engine_speak('Erro ao obter a previsão para os próximos dias!')
-
+    
 

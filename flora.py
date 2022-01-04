@@ -13,7 +13,7 @@ from model.scripts.engine_speak import engine_speak
 from model.scripts.search import search_google, search_youtube
 from model.scripts.calculator import calculator
 from model.scripts.there_exist import there_exist
-from model.scripts.get_weather import get_weather, get5days_weather
+from model.scripts.get_weather import get_weather, get5days_weather, get_local_code, search_local
 
 
 class Virtual_assistant():
@@ -68,7 +68,7 @@ class Virtual_assistant():
         if there_exist(voice_data,CONVERSATION_1):
            response_conversation(voice_data, 1, self.person)
         
-        if there_exist(voice_data,CONVERSATION_2) and 'voce' in voice_data:
+        if there_exist(voice_data,CONVERSATION_2) and 'você' in voice_data:
             response_conversation(voice_data, 2, self.person)
             
         if there_exist(voice_data,CONVERSATION_3):
@@ -102,10 +102,20 @@ class Virtual_assistant():
                 engine_speak("Desculpe, não entendi.")
                 
         if there_exist(voice_data, WHEATER_CONVERSATION):
-            local = voice_data.split()[-1]
+            response = voice_data.split()[4:-1]
+            local = ' '.join(response)
             get_weather(local)
-            
-            
+            engine_speak("Deseja ver a previsão para os próximos dias? ")
+            answer = self.record_audio()
+            if answer == 'sim':
+                coord = search_local(local)
+                code = get_local_code(coord['lat'], coord['long'])
+                days_weather = get5days_weather(code['codigoLocal'])
+                for day in days_weather:
+                    engine_speak("Previsão para:" + day['dia'] + ': ' + day['clima'])
+                    engine_speak('Mínima: ' + str(int(day['min'])) + "\xb0" + "C, Máxima:" + str(int(day['max'])) + "\xb0" + "C")
+                        
+              
             
     
        

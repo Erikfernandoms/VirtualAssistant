@@ -1,1 +1,1 @@
-WHEATER_CONVERSATION = ["previsão do tempo em", "previsão para hoje em", "clima de hoje em", "qual o clima em", "qual será o tempo hoje em"]
+WHEATER_CONVERSATION = ["previsão do tempo em", "previsão para hoje em", "clima de hoje em", "qual o clima em", "qual o tempo em"]
