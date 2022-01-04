@@ -1,5 +1,7 @@
 import speech_recognition as sr
 import pyttsx3, random
+from model.recognize_storage.close_storage import CLOSE_STORAGE
+from model.recognize_storage.computer_manager_storage import TURN_OFF,RESTART
 from model.recognize_storage.weather_storage import WHEATER_CONVERSATION
 from model.recognize_storage.introduction_storage import INTRODUCTION, INTRODUCTION_MESTRE
 from model.recognize_storage.search_storage import SEARCH_STORAGE
@@ -7,6 +9,7 @@ from model.recognize_storage.greeting_storage import GREETINGS
 from model.recognize_storage.conversations_storage import CONVERSATION_1, CONVERSATION_2, CONVERSATION_3, CONVERSATION_4
 from model.recognize_storage.open_storage import OPEN_STORAGE
 from model.recognize_storage.operations_storage import SUM,SUB,MULT,DIV,POW
+from model.scripts.close_file import close_file
 from model.scripts.greetings import response_greetings, response_conversation
 from model.scripts.open_file import open_file
 from model.scripts.engine_speak import engine_speak
@@ -14,6 +17,7 @@ from model.scripts.search import search_google, search_youtube
 from model.scripts.calculator import calculator
 from model.scripts.there_exist import there_exist
 from model.scripts.get_weather import get_weather, get5days_weather, get_local_code, search_local
+from model.scripts.computer_management import shutdown,restart
 
 
 class Virtual_assistant():
@@ -49,7 +53,7 @@ class Virtual_assistant():
         with sr.Microphone() as source:
             if ask:
                 engine_speak(ask)
-            audio = self.recognize_voice.listen(source, 3, 4)
+            audio = self.recognize_voice.listen(source, timeout=None, phrase_time_limit=None)
             try:
                 self.voice_data = self.recognize_voice.recognize_google(audio,language='pt-BR')
             except sr.UnknownValueError: #Exceção para caso não fale nada ou não entenda o que foi dito
@@ -86,6 +90,9 @@ class Virtual_assistant():
         #Abrir programas
         if there_exist(voice_data,OPEN_STORAGE):
             open_file(voice_data)
+        #Fechar programas
+        if there_exist(voice_data,CLOSE_STORAGE):
+            close_file(voice_data)
         #Calculadora
         if there_exist(voice_data,['calcule','calcular']):
             if there_exist(voice_data,SUM):
@@ -100,7 +107,7 @@ class Virtual_assistant():
                calculator(voice_data, "**")
             else:
                 engine_speak("Desculpe, não entendi.")
-                
+        #Previsão do tempo        
         if there_exist(voice_data, WHEATER_CONVERSATION):
             response = voice_data.split()[4:-1]
             local = ' '.join(response)
@@ -114,11 +121,25 @@ class Virtual_assistant():
                 for day in days_weather:
                     engine_speak("Previsão para:" + day['dia'] + ': ' + day['clima'])
                     engine_speak('Mínima: ' + str(int(day['min'])) + "\xb0" + "C, Máxima:" + str(int(day['max'])) + "\xb0" + "C")
-                        
-              
-            
-    
-       
+            else:
+                engine_speak(f"Tudo bem {self.person}, mais alguma coisa?")
+        #Desligar o computador
+        if there_exist(voice_data, TURN_OFF):
+            engine_speak("Você tem certeza que quer desligar o computador?")
+            answer = self.record_audio()
+            if answer == 'sim':
+                shutdown()
+            else:
+                engine_speak(f"Tudo bem {self.person}, mais alguma coisa?")
+        #Reiniciar o computador
+        if there_exist(voice_data, RESTART):
+            engine_speak("Você tem certeza que quer reiniciar o computador?")
+            answer = self.record_audio()
+            if answer == 'sim':
+                restart()
+            else:
+                engine_speak(f"Tudo bem {self.person}, mais alguma coisa?")
+        
     
     def stop_assistant(self):
         if there_exist(self.voice_data,['sair', 'tchau', 'por hora só']):

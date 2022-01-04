@@ -1,0 +1,1 @@
+CLOSE_STORAGE = ['fechar', 'feche', 'encerre', 'encerrar']
