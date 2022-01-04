@@ -14,6 +14,8 @@ from model.scripts.search import search_google, search_youtube
 from model.scripts.calculator import calculator
 from model.scripts.there_exist import there_exist
 from model.scripts.get_weather import get_weather, get5days_weather
+
+
 class Virtual_assistant():
     def __init__(self):
         self.person = "" #Pessoa que estará falando com a assistente
