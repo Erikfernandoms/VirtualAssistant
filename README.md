@@ -1,4 +1,4 @@
-# Flora - Asisstente Virtual
+# Flora - Assistente Virtual
 
 ## Introdução
 O objetivo deste projeto foi projetar uma assistente virtual simples, para auxiliar em tarefas do dia a dia.
